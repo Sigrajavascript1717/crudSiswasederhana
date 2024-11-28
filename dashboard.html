@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f7f7;
+      }
+      .container {
+        width: 80%;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        margin: 20px 0;
+      }
+      table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+      }
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .btn-add {
+        background-color: #28a745;
+      }
+      .btn-delete {
+        background-color: #dc3545;
+      }
+      .btn-edit {
+        background-color: #ffc107;
+      }
+      @media (max-width: 768px) {
+        table,
+        th,
+        td {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Data Siswa</h1>
+
+      <button
+        class="btn btn-add"
+        data-bs-toggle="modal"
+        data-bs-target="#dataModal"
+      >
+        Tambah Data
+      </button>
+      <button
+        onclick="logout()"
+        class="btn btn-add"
+        data-bs-toggle="modal"
+        data-bs-target="#dataModal"
+      >
+        Log Out
+      </button>
+
+      <div
+        class="modal fade"
+        id="dataModal"
+        tabindex="-1"
+        aria-labelledby="dataModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="dataModalLabel">
+                Tambah/Edit Data Siswa
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="nama" class="form-label">Nama</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nama"
+                  placeholder="Nama"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="nisn" class="form-label">NISN</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nisn"
+                  placeholder="NISN"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="jenisKelamin" class="form-label"
+                  >Jenis Kelamin</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="jenisKelamin"
+                  placeholder="Jenis Kelamin"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="tanggalLahir" class="form-label"
+                  >Tanggal Lahir</label
+                >
+                <input
+                  type="date"
+                  class="form-control"
+                  id="tanggalLahir"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="kelas" class="form-label">Kelas</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="kelas"
+                  placeholder="Kelas"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="umur" class="form-label">Umur</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="umur"
+                  placeholder="Umur"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Tutup
+              </button>
+              <button type="button" class="btn btn-primary" id="saveBtn">
+                Simpan Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Nama</th>
+            <th>NISN</th>
+            <th>Jenis Kelamin</th>
+            <th>Tanggal Lahir</th>
+            <th>Umur</th>
+            <th>Kelas</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+      function logout() {
+        window.location.href = "index.html";
+      }
+      let dataSiswa = [];
+      let editIndex = -1;
+      let dataSiswaget = JSON.parse(localStorage.getItem("dataSiswa")) || [];
+
+      function hitungUmur(tanggalLahir) {
+        const today = new Date();
+        const birthDate = new Date(tanggalLahir);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        return age;
+      }
+
+      function renderTable() {
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+        dataSiswa.forEach((data, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${data.nama}</td>
+      <td>${data.nisn}</td>
+      <td>${data.jenisKelamin}</td>
+      <td>${data.tanggalLahir}</td>
+      <td>${data.umur}</td>
+      <td>${data.kelas}</td>
+      <td class="action-buttons">
+        <button class="btn btn-edit" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="editData(${index})">Edit</button>
+        <button class="btn btn-delete" onclick="deleteData(${index})">Delete</button>
+      </td>
+    `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      document.getElementById("saveBtn").addEventListener("click", function () {
+        const nama = document.getElementById("nama").value;
+        const nisn = document.getElementById("nisn").value;
+        const jenisKelamin = document.getElementById("jenisKelamin").value;
+        const tanggalLahir = document.getElementById("tanggalLahir").value;
+        const kelas = document.getElementById("kelas").value;
+        const umur = document.getElementById("umur").value;
+
+        if (editIndex === -1) {
+          // Tambah data baru
+          dataSiswa.push({
+            nama,
+            nisn,
+            jenisKelamin,
+            tanggalLahir,
+            umur,
+            kelas,
+          });
+        } else {
+          // Edit data yang ada
+          dataSiswa[editIndex] = {
+            nama,
+            nisn,
+            jenisKelamin,
+            tanggalLahir,
+            umur,
+            kelas,
+          };
+          editIndex = -1;
+        }
+
+        localStorage.setItem("dataSiswa", JSON.stringify(dataSiswa));
+
+        document.getElementById("nama").value = "";
+        document.getElementById("nisn").value = "";
+        document.getElementById("jenisKelamin").value = "";
+        document.getElementById("tanggalLahir").value = "";
+        document.getElementById("kelas").value = "";
+        document.getElementById("umur").value = "";
+        renderTable();
+      });
+
+      function editData(index) {
+        const data = dataSiswa[index];
+        document.getElementById("nama").value = data.nama;
+        document.getElementById("nisn").value = data.nisn;
+        document.getElementById("jenisKelamin").value = data.jenisKelamin;
+        document.getElementById("tanggalLahir").value = data.tanggalLahir;
+        document.getElementById("kelas").value = data.kelas;
+        document.getElementById("umur").value = data.umur;
+        editIndex = index;
+      }
+
+      function deleteData(index) {
+        dataSiswa.splice(index, 1);
+        renderTable();
+      }
+
+      document
+        .getElementById("tanggalLahir")
+        .addEventListener("change", function () {
+          const umur = hitungUmur(this.value);
+          document.getElementById("umur").value = umur;
+        });
+
+      renderTable();
+    </script>
+  </body>
+</html>

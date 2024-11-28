@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Data Siswa - User</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f4f6f9;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        color: #343a40;
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      /* Table Styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 18px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      th {
+        background-color: #007bff;
+        color: black;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      td {
+        background-color: #f9f9f9;
+        color: #555;
+      }
+
+      tr:nth-child(even) td {
+        background-color: #f4f4f4;
+      }
+
+      tr:hover td {
+        background-color: #e9ecef;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .table th,
+      .table td {
+        vertical-align: middle;
+      }
+
+      .no-data {
+        text-align: center;
+        font-style: italic;
+        color: #777;
+      }
+
+      @media (max-width: 768px) {
+        table {
+          font-size: 0.95rem;
+        }
+
+        th,
+        td {
+          padding: 12px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+      }
+
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #007bff;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Data Siswa (User View)</h1>
+      <button onclick="logout()" class="btn btn-danger">keluar</button>
+      <table id="dataTable" class="table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Nama</th>
+            <th>NISN</th>
+            <th>Jenis Kelamin</th>
+            <th>Tanggal Lahir</th>
+            <th>Umur</th>
+            <th>Kelas</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script>
+      let dataSiswa = JSON.parse(localStorage.getItem("dataSiswa")) || [];
+
+      function renderTable() {
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+
+        if (dataSiswa.length === 0) {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td colspan="7" class="text-center">Tidak ada data untuk ditampilkan</td>`;
+          tableBody.appendChild(row);
+        } else {
+          dataSiswa.forEach((data, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${data.nama}</td>
+          <td>${data.nisn}</td>
+          <td>${data.jenisKelamin}</td>
+          <td>${data.tanggalLahir}</td>
+          <td>${data.umur}</td>
+          <td>${data.kelas}</td>
+        `;
+            tableBody.appendChild(row);
+          });
+        }
+      }
+
+      renderTable();
+      function logout() {
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>
